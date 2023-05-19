@@ -1,0 +1,77 @@
+---
+title: "Working"
+author: "Micah Turner"
+date: "2023-05-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Solution
+```{r}
+# Function to create matrix with cacheable inverse
+makeCacheMatrix <- function(x = matrix()) {
+  # Initialize the cache
+  cache <- NULL
+  
+  # Function to set the matrix
+  set <- function(matrix) {
+    x <<- matrix
+    cache <<- NULL
+  }
+  
+  # Function to get the matrix
+  get <- function() {
+    x
+  }
+  
+  # Function to set the inverse of the matrix
+  setInverse <- function(inverse) {
+    cache <<- inverse
+  }
+  
+  # Function to get the inverse of the matrix
+  getInverse <- function() {
+    cache
+  }
+  
+  # Return a list of functions
+  list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
+}
+
+# Function to compute the inverse of the cacheable matrix
+cacheSolve <- function(cacheableMatrix) {
+  # Check if the inverse is already cached
+  inverse <- cacheableMatrix$getInverse()
+  if (!is.null(inverse)) {
+    message("getting cached data")
+    return(inverse)
+  }
+  
+  # If the inverse is not cached, compute it
+  matrix <- cacheableMatrix$get()
+  inverse <- solve(matrix)
+  
+  # Cache the inverse
+  cacheableMatrix$setInverse(inverse)
+  
+  # Return the inverse
+  inverse
+}
+
+```
+
+#Test 1
+```{r}
+m1 <- matrix(c(1/2, -1/4, -1, 3/4), nrow = 2, ncol = 2)
+myMatrix_object <- makeCacheMatrix(m1)
+cacheSolve(myMatrix_object)
+```
+#Test 2
+```{r}
+n1 <- matrix(c(6,2,8,4), nrow = 2, ncol = 2)
+myMatrix_object <- makeCacheMatrix(n1)
+cacheSolve(myMatrix_object)
+```
